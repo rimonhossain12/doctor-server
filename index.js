@@ -28,21 +28,18 @@ async function run() {
             res.send(service);
         });
 
-
-        app.post('/booking', async (req, res) => {
-            const booking = req.body;
-            const query = { serviceName: booking.serviceName, patientName: booking.patientName, date: booking.date };
-            let exists = await bookingCollection.findOne(query);
-            if (exists) {
-                return res.send({ success: false, booking: exists });
-            } else {
-                const result = await bookingCollection.insertOne(booking);
-                res.send({ success: true, result })
-            }
-
-
-
-        })
+        // ei part ta abr kora
+        // app.post('/booking', async (req, res) => {
+        //     const booking = req.body;
+        //     const query = { serviceName: booking.serviceName, patientName: booking.patientName, date: booking.date };
+        //     let exists = await bookingCollection.findOne(query);
+        //     if (exists) {
+        //         return res.send({ success: false, booking: exists });
+        //     } else {
+        //         const result = await bookingCollection.insertOne(booking);
+        //         res.send({ success: true, result })
+        //     }
+        // })
 
     }
     catch {
