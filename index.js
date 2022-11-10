@@ -42,8 +42,24 @@ async function run() {
                 console.log('data added', result);
                 return res.send({ success: true, result });
             }
-        })
+        });
 
+        app.get('/available', async (req, res) => {
+            const date = req.query.date;
+            console.log('available get api hitting and date = ',date);
+            const services = await servicesCollection.find().toArray();
+            const query = { data: date };
+            const bookings = await bookingCollection.find(query).toArray();
+
+            // res.send(services);
+            services.forEach(service => {
+                const serviceBookings = bookings.filter(book => book.serviceName === service.name);
+                const bookedSlots = serviceBookings.map(book => book.slot);
+                const available = service.slots.filter(slot => !bookedSlots.includes(slot));
+                services.slots = available;
+            });
+            res.send(services);
+        });
     }
     catch {
 
