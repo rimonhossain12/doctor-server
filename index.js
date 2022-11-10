@@ -20,7 +20,7 @@ async function run() {
         client.connect();
         const database = client.db('doctor-server');
 
-        const servicesCollection = database.collection('service');
+        const servicesCollection = database.collection('services');
         const bookingCollection = database.collection('bookings');
 
         app.get('/services', async (req, res) => {
@@ -44,22 +44,28 @@ async function run() {
             }
         });
 
+        // available appointment api
         app.get('/available', async (req, res) => {
             const date = req.query.date;
-            console.log('available get api hitting and date = ',date);
             const services = await servicesCollection.find().toArray();
-            const query = { data: date };
+            const query = { date: date };
             const bookings = await bookingCollection.find(query).toArray();
 
-            // res.send(services);
             services.forEach(service => {
-                const serviceBookings = bookings.filter(book => book.serviceName === service.name);
-                const bookedSlots = serviceBookings.map(book => book.slot);
+
+                const servicesBookings = bookings.filter(book => book.serviceName === service.name);
+
+                const bookedSlots = servicesBookings.map(book => book.slot);
+
                 const available = service.slots.filter(slot => !bookedSlots.includes(slot));
-                services.slots = available;
+
+                service.slots = available;
             });
+            // res.send({ length: services.length, services });
             res.send(services);
-        });
+        })
+
+
     }
     catch {
 
