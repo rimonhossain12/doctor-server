@@ -28,18 +28,21 @@ async function run() {
             res.send(service);
         });
 
-        // ei part ta abr kora
-        // app.post('/booking', async (req, res) => {
-        //     const booking = req.body;
-        //     const query = { serviceName: booking.serviceName, patientName: booking.patientName, date: booking.date };
-        //     let exists = await bookingCollection.findOne(query);
-        //     if (exists) {
-        //         return res.send({ success: false, booking: exists });
-        //     } else {
-        //         const result = await bookingCollection.insertOne(booking);
-        //         res.send({ success: true, result })
-        //     }
-        // })
+        app.post('/booking', async (req, res) => {
+            const bookingData = req.body;
+            console.log(bookingData);
+            const query = { serviceName: bookingData.serviceName, email: bookingData.email, slot: bookingData.slot, date: bookingData.date };
+
+            const exists = await bookingCollection.findOne(query);
+            if (exists) {
+                console.log('data not added already exists');
+                return res.send({ success: false, data: exists });
+            } else {
+                const result = await bookingCollection.insertOne(bookingData);
+                console.log('data added', result);
+                return res.send({ success: true, result });
+            }
+        })
 
     }
     catch {
@@ -56,5 +59,5 @@ app.get('/', (req, res) => {
 });
 
 app.listen(port, () => {
-    console.log(`Running on Port ${port}`);
+    console.log(`Running on Port: http://localhost:${port}`);
 })
