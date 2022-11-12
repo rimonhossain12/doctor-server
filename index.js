@@ -22,6 +22,7 @@ async function run() {
 
         const servicesCollection = database.collection('services');
         const bookingCollection = database.collection('bookings');
+        const userCollection = database.collection('users');
 
         app.get('/services', async (req, res) => {
             const service = await servicesCollection.find({}).toArray();
@@ -63,7 +64,24 @@ async function run() {
             });
             // res.send({ length: services.length, services });
             res.send(services);
-        })
+        });
+
+        // save user database 
+        app.put('/users/:email', async (req, res) => {
+            const email = req.params.email;
+            console.log('email', email)
+            const user = req.body;
+            console.log('put api hitting and user body = ', user);
+            const filter = { email: email };
+            const options = { upsert: true };
+            const updateDoc = {
+                $set: { user }
+            };
+            const result = await userCollection.updateOne(filter, updateDoc, options);
+            res.send(result);
+            console.log(result)
+        });
+
 
 
     }
