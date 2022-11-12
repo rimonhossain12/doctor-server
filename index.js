@@ -51,9 +51,7 @@ async function run() {
             const services = await servicesCollection.find().toArray();
             const query = { date: date };
             const bookings = await bookingCollection.find(query).toArray();
-
             services.forEach(service => {
-
                 const servicesBookings = bookings.filter(book => book.serviceName === service.name);
 
                 const bookedSlots = servicesBookings.map(book => book.slot);
@@ -66,6 +64,10 @@ async function run() {
             res.send(services);
         });
 
+        app.get('/users', async (req, res) => {
+            const result = await userCollection.find().toArray();
+            res.send(result);
+        })
         // save user database 
         app.put('/users/:email', async (req, res) => {
             const email = req.params.email;
@@ -81,8 +83,6 @@ async function run() {
             res.send(result);
             console.log(result)
         });
-
-
 
     }
     catch {
