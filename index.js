@@ -2,7 +2,7 @@ const { MongoClient, ServerApiVersion } = require('mongodb');
 const express = require('express');
 const app = express();
 const cors = require('cors');
-const { json } = require('express');
+const { json, response } = require('express');
 const port = process.env.PORT || 5000;
 require('dotenv').config();
 
@@ -67,13 +67,29 @@ async function run() {
         app.get('/users', async (req, res) => {
             const result = await userCollection.find().toArray();
             res.send(result);
+        });
+
+        // all the user get
+        app.get('/allUser', async (req, res) => {
+            const user = await userCollection.find().toArray();
+            // console.log(user)
+            res.send(user);
         })
+
+        // specific user server find
+
+        app.get('/user/:email', async (req, res) => {
+            const email = req.params.email;
+            const query = { email: email };
+            const serviceResult = await bookingCollection.find(query).toArray();
+            console.log(serviceResult);
+            res.send(serviceResult);
+        })
+
         // save user database 
         app.put('/users/:email', async (req, res) => {
             const email = req.params.email;
-            console.log('email', email)
             const user = req.body;
-            console.log('put api hitting and user body = ', user);
             const filter = { email: email };
             const options = { upsert: true };
             const updateDoc = {
@@ -81,6 +97,13 @@ async function run() {
             };
             const result = await userCollection.updateOne(filter, updateDoc, options);
             res.send(result);
+        });
+
+        app.delete('/user/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: id };
+            const result = await userCollection.deleteOne(query);
+            console.log('delete api');
             console.log(result)
         });
 
